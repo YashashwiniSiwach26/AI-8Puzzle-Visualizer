@@ -1,0 +1,16 @@
+  PASS  iddls: Run plays to the end and shows a summary
+  PASS  iddls: solution path strip rendered when found
+  PASS  iddls: frontier/explored/successor panels populated
+  PASS  Run starts playback
+  PASS  Pause disables Pause, enables Resume
+  PASS  Next Step advances, Previous returns
+  PASS  Resume plays to the end
+  PASS  Reset clears results
+  PASS  duplicate tile is rejected
+  PASS  Run is blocked on invalid input
+  PASS  unsolvable state is flagged
+  PASS  Run is blocked on unsolvable state
+  PASS  Random puzzle is valid & solvable
+  PASS  Comparison button runs without error
+
+UI smoke test: all checks passed

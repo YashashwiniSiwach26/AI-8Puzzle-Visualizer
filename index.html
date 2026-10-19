@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 8-Puzzle Visualizer</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-md navbar-dark sticky-top">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="#home">🧩 8-Puzzle AI</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" data-page="home" href="#home">Home</a></li>
+        <li class="nav-item"><a class="nav-link" data-page="solver" href="#solver">Solver</a></li>
+        <li class="nav-item"><a class="nav-link" data-page="compare" href="#compare">Comparison</a></li>
+        <li class="nav-item"><a class="nav-link" data-page="algorithms" href="#algorithms">Algorithm Info</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="container py-4">
+
+<!-- ================= HOME ================= -->
+<section id="page-home" class="page">
+  <div class="hero p-4 p-md-5 mb-4">
+    <p class="mb-1 text-uppercase small opacity-75" id="homeCourse"></p>
+    <h1 class="display-6 fw-bold" id="homeTitle"></h1>
+    <p class="mb-1"><b>Student:</b> <span id="homeName"></span></p>
+    <p class="mb-3"><b>Registration No.:</b> <span id="homeReg"></span></p>
+    <span class="badge bg-light text-dark" id="homeAssigned"></span>
+    <div class="mt-4 d-flex flex-wrap gap-2">
+      <a href="#solver" class="btn btn-light btn-lg">Open Solver</a>
+      <a href="#compare" class="btn btn-outline-light btn-lg">Compare Algorithms</a>
+      <a href="#algorithms" class="btn btn-outline-light btn-lg">Algorithm Info</a>
+    </div>
+  </div>
+  <div class="row g-3">
+    <div class="col-lg-7"><div class="card h-100"><div class="card-header">Introduction to the 8-Puzzle Problem</div><div class="card-body">
+      <p>The 8-Puzzle is a sliding-tile puzzle on a 3×3 board holding the tiles 1–8 and one empty square (the <i>blank</i>). A move slides a tile that is next to the blank into it, which is the same as moving the blank up, down, left or right. The aim is to rearrange an <b>initial state</b> into a <b>goal state</b> using as few moves as possible.</p>
+      <p class="mb-1"><b>As a state-space search problem:</b></p>
+      <ul>
+        <li><b>State:</b> an arrangement of the nine cells (9!/2 = 181,440 reachable from any solvable start).</li>
+        <li><b>Actions:</b> move the blank Up / Down / Left / Right (2–4 legal moves).</li>
+        <li><b>Transition cost:</b> 1 per move.</li>
+        <li><b>Goal test:</b> the current state equals the goal state.</li>
+      </ul>
+      <p class="mb-0">Exactly half of all arrangements are unreachable from a given goal; this app checks solvability with inversion parity before searching.</p>
+    </div></div></div>
+    <div class="col-lg-5"><div class="card h-100"><div class="card-header">What you can do here</div><div class="card-body">
+      <ul class="mb-0">
+        <li>Enter your own initial and goal states, or generate a random solvable puzzle</li>
+        <li>Run Iterative Deepening Depth Limited Search (IDDLS), the assigned algorithm</li>
+        <li>Watch the frontier, explored list and successor states update step by step</li>
+        <li>Pause, step forwards/backwards, change speed</li>
+        <li>See measured IDDLS statistics on the Comparison page</li>
+        <li>Read the theory on the Algorithm Info page</li>
+      </ul></div></div></div>
+  </div>
+</section>
+
+<!-- ================= SOLVER ================= -->
+<section id="page-solver" class="page">
+  <div class="row g-3">
+    <div class="col-lg-5">
+      <div class="card mb-3"><div class="card-header">1. Puzzle input</div><div class="card-body">
+        <div class="row">
+          <div class="col-6 text-center"><div class="small fw-semibold mb-1">Initial state</div><div class="grid3 mx-auto" id="initGrid"></div></div>
+          <div class="col-6 text-center"><div class="small fw-semibold mb-1">Goal state</div><div class="grid3 mx-auto" id="goalGrid"></div></div>
+        </div>
+        <div class="form-text text-center mt-2">Digits 1–8; blank = <code>_</code> or empty.</div>
+        <div id="validationMsg" class="alert alert-secondary py-2 mt-2 mb-2 small"></div>
+        <div class="d-flex flex-wrap gap-2">
+          <button class="btn btn-outline-primary btn-sm" id="btnRandom">🎲 Generate Random Puzzle</button>
+          <button class="btn btn-outline-secondary btn-sm" id="btnSample">Load assignment example</button>
+          <button class="btn btn-outline-secondary btn-sm" id="btnStdGoal">Standard goal</button>
+        </div>
+      </div></div>
+
+      <div class="card mb-3"><div class="card-header">2. Algorithm</div><div class="card-body">
+        <select id="algoSelect" class="form-select mb-2" aria-label="Algorithm"></select>
+        <div id="dlsWrap" class="mb-2"><label class="form-label small mb-0" for="dlsLimit">Depth limit (DLS)</label><input type="number" id="dlsLimit" class="form-control form-control-sm" min="0" max="60" value="10"></div>
+        <div id="iddlsWrap" class="mb-2"><label class="form-label small mb-0" for="iddlsMax">Maximum depth to try (IDDLS)</label><input type="number" id="iddlsMax" class="form-control form-control-sm" min="0" max="60" value="40"></div>
+        <div id="heurWrap" class="mb-2"><label class="form-label small mb-0" for="heuristic">Heuristic (GBFS / A*)</label>
+          <select id="heuristic" class="form-select form-select-sm"><option value="manhattan">Manhattan Distance</option><option value="misplaced">Misplaced Tiles</option></select></div>
+        <div id="memoWrap" class="form-check mb-2"><input class="form-check-input" type="checkbox" id="memoChk" checked><label class="form-check-label small" for="memoChk">Prune repeated states <span class="text-muted">(recommended. Unchecked = textbook tree-search DLS: only cycles on the current path are avoided; much slower on puzzles deeper than ~20 moves)</span></label></div>
+        <div><label class="form-label small mb-0" for="nodeLimit">Safety node limit (max nodes examined)</label><input type="number" id="nodeLimit" class="form-control form-control-sm" min="100" step="1000"></div>
+      </div></div>
+
+      <div class="card"><div class="card-header">3. Controls</div><div class="card-body">
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          <button class="btn btn-success" id="btnRun">▶ Run</button>
+          <button class="btn btn-warning" id="btnPause">⏸ Pause</button>
+          <button class="btn btn-primary" id="btnResume">⏯ Resume</button>
+          <button class="btn btn-outline-dark" id="btnPrev">⏮ Previous</button>
+          <button class="btn btn-outline-dark" id="btnNext">⏭ Next Step</button>
+          <button class="btn btn-outline-info" id="btnSkip">⏩ Jump to solution</button>
+          <button class="btn btn-danger" id="btnReset">↺ Reset</button>
+        </div>
+        <label for="speed" class="form-label small mb-0">Speed: <b id="speedLbl"></b></label>
+        <input type="range" class="form-range" id="speed" min="1" max="10" value="6">
+        <div class="form-text">Long searches are fast-forwarded automatically (at most ~250 animated frames). Next/Previous Step always move one step.</div>
+      </div></div>
+    </div>
+
+    <div class="col-lg-7">
+      <div class="card mb-3"><div class="card-header d-flex justify-content-between flex-wrap"><span>Puzzle visualization</span><span class="small text-muted" id="stepLabel">Not started</span></div>
+        <div class="card-body">
+          <div class="row align-items-center g-3">
+            <div class="col-sm-8"><div class="board" id="board"></div><div class="text-center small mt-2 text-muted" id="boardCaption">Current state</div></div>
+            <div class="col-sm-4 text-center">
+              <div class="small fw-semibold">Initial</div><div id="miniInit" class="mb-2"></div>
+              <div class="small fw-semibold">Goal</div><div id="miniGoal"></div>
+              <div class="small text-muted mt-2">Green tiles are already in their goal position.</div>
+            </div>
+          </div>
+        </div></div>
+
+      <div class="card mb-3"><div class="card-header">Search process (live)</div><div class="card-body">
+        <div class="row g-3">
+          <div class="col-sm-6">
+            <div class="small fw-semibold mb-1">Current node being expanded</div><div id="curNode" class="mb-2 text-muted">—</div>
+            <div class="small fw-semibold mb-1">Parent node</div><div id="parentNode" class="mb-2 text-muted">—</div>
+          </div>
+          <div class="col-sm-6" id="metrics"></div>
+        </div>
+        <div class="small fw-semibold mt-2 mb-1">Generated successor states <span class="text-muted fw-normal" id="succNote"></span></div><div id="succList" class="scroll-x text-muted">—</div>
+        <div class="small fw-semibold mt-2 mb-1">Frontier / Open list <span class="text-muted fw-normal" id="frontNote"></span></div><div id="frontList" class="scroll-x text-muted">—</div>
+        <div class="small fw-semibold mt-2 mb-1">Explored / Closed list <span class="text-muted fw-normal" id="expNote"></span></div><div id="expList" class="scroll-x text-muted">—</div>
+      </div></div>
+
+      <div class="card mb-3" id="summaryCard"><div class="card-header">Solution summary</div><div class="card-body" id="summary"><span class="text-muted">Run an algorithm to see the summary.</span></div></div>
+      <div class="card"><div class="card-header">Final solution path</div><div class="card-body"><div id="pathStrip" class="scroll-x text-muted">—</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= COMPARE ================= -->
+<section id="page-compare" class="page">
+  <div class="card mb-3"><div class="card-header">Performance comparison on the same puzzle</div><div class="card-body">
+    <p class="small text-muted mb-2">Uses the initial and goal states currently entered on the Solver page, the DLS depth limit, the IDDLS maximum depth and the node limit set there. Every enabled algorithm is run (informed ones with both heuristics). Every number below is measured live in your browser.</p>
+    <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
+      <div>Initial <span id="cmpInit"></span></div><div>Goal <span id="cmpGoal"></span></div>
+      <button class="btn btn-primary" id="btnCompare">Run enabled algorithms</button><span id="cmpStatus" class="small text-muted"></span>
+    </div>
+    <div class="table-responsive"><table class="table table-sm table-striped table-compare align-middle" id="cmpTable">
+      <thead><tr><th>Algorithm</th><th>Solution found</th><th>Moves</th><th>Nodes generated</th><th>Nodes expanded</th><th>Max depth</th><th>Time (ms)</th><th>Memory (approx.)</th></tr></thead><tbody></tbody></table></div>
+    <div class="small text-muted">Green rows = shortest solution found. Memory = peak stored nodes × ~64 bytes (estimate, not a measurement). "Expanded" = nodes removed from the frontier and examined. DFS and GBFS are not optimal; DLS may report cutoff when the limit is too small.</div>
+  </div></div>
+</section>
+
+<!-- ================= ALGORITHM INFO ================= -->
+<section id="page-algorithms" class="page">
+  <div class="accordion mb-3" id="algoAccordion"></div>
+  <div class="card"><div class="card-header">Heuristic functions</div><div class="card-body" id="heurInfo"></div></div>
+</section>
+
+</main>
+<footer class="footer text-center py-4">AI 8-Puzzle Visualizer · <span id="footName"></span> · built with HTML5, CSS3, JavaScript (ES6) and Bootstrap 5</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/puzzle.js"></script>
+<script src="js/algorithms.js"></script>
+<script src="js/info.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

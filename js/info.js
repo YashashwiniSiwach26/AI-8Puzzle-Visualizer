@@ -1,0 +1,42 @@
+/* Content for the Algorithm Information page. b = branching factor (<=3 for the 8-puzzle), d = solution depth, m = max depth, l = depth limit. */
+const ALGO_INFO = {
+  bfs: { description: 'An uninformed search that expands all nodes at the current depth before moving one level deeper, using a FIFO queue.',
+    principle: 'Put the start node in a queue. Repeatedly remove the oldest node, test it, and append its unseen successors. A closed set avoids repeated states.',
+    advantages: ['Complete', 'Optimal when every move costs the same', 'Simple to implement'],
+    limitations: ['Stores every node of the current level: memory grows very fast', 'Explores blindly in all directions'],
+    time: 'O(b^d)', space: 'O(b^d)', complete: 'Yes (finite state space)', optimal: 'Yes, for unit step cost' },
+  dfs: { description: 'An uninformed search that always expands the deepest node first, using a LIFO stack.',
+    principle: 'Push the start node. Pop the newest node, test it, and push its unseen successors. A closed set prevents infinite loops on repeated states.',
+    advantages: ['Very small frontier in many problems', 'Can find a solution quickly if it lucks into the right branch'],
+    limitations: ['Not optimal: solutions are often extremely long', 'Without a closed set it can loop forever', 'Poor when the goal is shallow but the search dives into deep branches'],
+    time: 'O(b^m)', space: 'O(b*m) as a tree search (larger here because of the closed set)', complete: 'Yes with a closed set on a finite space; no for infinite spaces', optimal: 'No' },
+  dls: { description: 'DFS that refuses to expand nodes at or beyond a user-chosen depth limit l.',
+    principle: 'Run DFS, but treat nodes at depth l as having no successors. Result is one of: solution, CUTOFF (the limit hid part of the space, so a deeper solution may exist) or FAILURE (space fully searched, no solution).',
+    advantages: ['Avoids infinite descent', 'Memory use is small'],
+    limitations: ['Incomplete if l < d (reports cutoff)', 'Not optimal if l > d', 'Choosing l is guesswork'],
+    time: 'O(b^l)', space: 'O(b*l)', complete: 'No (only if l >= d)', optimal: 'No' },
+  iddls: { description: 'Iterative Deepening DLS repeats depth-limited search with limits 0, 1, 2, ... until a solution is found. It combines BFS completeness with DFS memory use.',
+    principle: 'For l = 0, 1, 2, ...: run DLS(l). If it finds the goal, stop. If it returns FAILURE (nothing was cut off), stop: no solution. If it returns CUTOFF, increase l and repeat. This app offers two modes: textbook tree-search DLS (only cycles on the current path are avoided) and DLS with repeated-state pruning (a state is skipped if it was already reached at the same or a shallower depth), which is far faster and keeps completeness and optimality.',
+    advantages: ['Complete', 'Optimal for unit step cost', 'Low memory compared with BFS', 'No need to guess a depth limit'],
+    limitations: ['Re-expands shallow nodes in every iteration', 'Slower than A* on hard instances'],
+    time: 'O(b^d)', space: 'O(b*d)', complete: 'Yes', optimal: 'Yes, for unit step cost' },
+  ucs: { description: 'Expands the frontier node with the lowest path cost g(n). With unit step costs it behaves like BFS.',
+    principle: 'Keep a priority queue ordered by g(n). Pop the cheapest node, test it, push successors; if a cheaper route to a frontier state is found, replace the old entry.',
+    advantages: ['Complete', 'Optimal for any positive step costs'],
+    limitations: ['No heuristic guidance: explores in all directions', 'Same memory growth as BFS'],
+    time: 'O(b^(1+C*/e))  (O(b^d) here)', space: 'O(b^(1+C*/e))  (O(b^d) here)', complete: 'Yes (positive costs)', optimal: 'Yes' },
+  gbfs: { description: 'An informed search that expands the node that looks closest to the goal, ordered only by h(n).',
+    principle: 'Priority queue ordered by f(n) = h(n). Pop the node with the smallest heuristic value and push its unseen successors.',
+    advantages: ['Often very fast', 'Expands few nodes with a good heuristic'],
+    limitations: ['Ignores the cost already paid g(n)', 'Not optimal: solutions can be long', 'Can follow misleading heuristic values'],
+    time: 'O(b^m) worst case, usually far less', space: 'O(b^m) worst case', complete: 'Yes with a closed set on a finite space', optimal: 'No' },
+  astar: { description: 'An informed search that orders nodes by f(n) = g(n) + h(n): cost so far plus estimated cost to go.',
+    principle: 'Priority queue ordered by f(n), ties broken by smaller h(n). With an admissible, consistent heuristic the first time the goal is removed from the queue its path is optimal.',
+    advantages: ['Complete', 'Optimal with an admissible heuristic', 'Usually expands far fewer nodes than BFS/UCS'],
+    limitations: ['Memory heavy: stores all generated nodes', 'Quality depends on the heuristic'],
+    time: 'O(b^d) worst case, much less with a good h', space: 'O(b^d)', complete: 'Yes', optimal: 'Yes (admissible/consistent h)' }
+};
+const HEURISTIC_INFO = {
+  misplaced: { name: 'Misplaced Tiles', text: 'h(n) = number of non-blank tiles that are not in their goal position. Admissible and consistent, because each misplaced tile needs at least one move. The blank is never counted.' },
+  manhattan: { name: 'Manhattan Distance', text: 'h(n) = sum over non-blank tiles of |row - goalRow| + |col - goalCol|. Admissible and consistent, and at least as informed as Misplaced Tiles, so A* expands fewer nodes with it. The blank is never counted.' }
+};

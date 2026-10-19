@@ -1,0 +1,79 @@
+Input validation
+  PASS  accepts a valid state
+  PASS  rejects duplicate tiles
+  PASS  rejects missing blank
+  PASS  rejects wrong length
+  PASS  rejects non-digits / 9
+  PASS  parseCells maps _ and empty to blank
+  PASS  parseCells rejects "9" and "a"
+Solvability
+  PASS  standard goal is solvable from itself
+  PASS  swapped 7/8 is unsolvable vs standard goal
+  PASS  assignment example is solvable
+  PASS  solvability is relative to the goal (custom goal)
+  PASS  50 random puzzles are solvable & not already solved
+  PASS  random puzzles respect a custom goal
+Heuristics (blank excluded, custom goals)
+  PASS  goal -> 0 for both
+  PASS  one move away -> 1 for both
+  PASS  assignment example: misplaced=4 (tiles 2,8,1,6), manhattan=5
+  PASS  manhattan on swapped 1<->3 row = 4
+  PASS  heuristic uses the custom goal
+Trivial cases (all 7 algorithms)
+  PASS  bfs: already solved -> 0 moves
+  PASS  bfs: one move -> 1 move
+  PASS  dfs: already solved -> 0 moves
+  PASS  dfs: one move -> 1 move
+  PASS  dls: already solved -> 0 moves
+  PASS  dls: one move -> 1 move
+  PASS  iddls: already solved -> 0 moves
+  PASS  iddls: one move -> 1 move
+  PASS  ucs: already solved -> 0 moves
+  PASS  ucs: one move -> 1 move
+  PASS  gbfs: already solved -> 0 moves
+  PASS  gbfs: one move -> 1 move
+  PASS  astar: already solved -> 0 moves
+  PASS  astar: one move -> 1 move
+Correctness & optimality on the assignment example (optimal = 5)
+  PASS  bfs finds a valid path
+  PASS  dfs finds a valid path
+  PASS  dls finds a valid path
+  PASS  iddls finds a valid path
+  PASS  ucs finds a valid path
+  PASS  gbfs finds a valid path
+  PASS  astar finds a valid path
+  PASS  bfs is optimal (5 moves)
+  PASS  ucs is optimal (5 moves)
+  PASS  iddls is optimal (5 moves)
+  PASS  astar (manhattan) is optimal (5 moves)
+  PASS  astar (misplaced) is optimal (5 moves)
+  PASS  DLS with limit 5 finds it; limit 12 finds a valid (maybe longer) path
+Depth limit: cutoff vs failure
+  PASS  DLS limit 4 < optimal 5 -> cutoff (not failure)
+  PASS  DLS limit 0, start != goal -> cutoff
+  PASS  DLS cutoff result has no path and null cost
+  PASS  IDDLS with max depth 3 -> cutoff; depth 5 -> found
+  PASS  IDDLS iterates limits 0..5 for an optimal-5 puzzle
+Unsolvable / node limit
+  PASS  BFS on unsolvable state exhausts all 181,440 reachable states -> failure
+  PASS  A* on unsolvable state -> failure
+  PASS  node limit gives status "limit", not failure
+Optimality cross-check on random solvable puzzles (BFS == UCS == A*)
+  PASS  12 random puzzles: BFS, UCS, A*(manh), A*(misp) agree and paths valid
+  PASS  IDDLS matches BFS on 10 puzzles within 14 random moves of a custom goal
+  PASS  DFS and GBFS return valid (not necessarily optimal) paths on 8 random puzzles
+  PASS  custom goal: all optimal algorithms agree
+Statistics sanity
+  PASS  stats are real & consistent
+  PASS  A* with Manhattan expands fewer nodes than BFS on the example
+  PASS  trace:false records no events
+IDDLS: textbook mode, large puzzles, trimmed trace
+  PASS  textbook IDDLS (memo:false) matches BFS on 10 shallow puzzles
+  PASS  textbook DLS: limit below optimal -> cutoff, at optimal -> found
+  PASS  textbook IDDLS never repeats a state on its own path
+  PASS  IDDLS (pruned) solves the 31-move puzzle 867254301 optimally with default-size limit
+  PASS  IDDLS (pruned) solves 15 random puzzles of ANY depth and matches BFS
+  PASS  trimmed trace stays replayable (no freed node referenced) and keeps true totals
+  PASS  pathIds line up with path states
+
+67 passed, 0 failed
