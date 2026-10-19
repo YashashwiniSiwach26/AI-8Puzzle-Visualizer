@@ -3,7 +3,7 @@
 Record your screen with the live GitHub Pages site open (any screen recorder; speak while you click). Target ≈ 4 minutes.
 
 **0:00 – Intro (20 s)**
-"I'm [yashashwini Siwach], register number [24bci0159]. This is my Interactive 8-Puzzle Solver for AI. My assigned algorithm is Iterative Deepening Depth Limited Search, implemented from scratch in plain JavaScript with Bootstrap." *Show Home page and the introduction.*
+"I'm [yashashwini Siwach], register number [24bci0159]. This is my Interactive 8-Puzzle Solver for AI. My assigned algorithm is Iterative Deepening Depth Limited Search, implemented from scratch in plain JavaScript with Bootstrap." 
 
 **0:20 – Puzzle setup (30 s)**
 Go to Solver. "I can type the initial and goal state; invalid input like a duplicate tile is rejected, and unsolvable states are detected using inversion parity relative to the goal." Type a duplicate, then a swapped pair, then click **Generate Random Puzzle**.
