@@ -1,10 +1,10 @@
 /* ===== EDIT THIS FILE: your personal details & which algorithms are enabled ===== */
 const APP_CONFIG = {
   courseName: 'Artificial Intelligence',
-  courseCode: '[COURSE CODE]',
+  courseCode: 'BCSE306L',
   assignmentTitle: 'Interactive 8-Puzzle Problem Solver using AI Search Algorithms',
-  studentName: '[YOUR NAME]',
-  registerNumber: '[YOUR REGISTRATION NUMBER]',
+  studentName: 'YASHASHWINI SIWACH',
+  registerNumber: '24BCI0159',
   // Algorithm number 4 in the assignment = Iterative Deepening Depth Limited Search
   assignedAlgorithm: 'iddls',
   // Only the assigned algorithm is enabled. To re-enable others (e.g. for extra comparison):
